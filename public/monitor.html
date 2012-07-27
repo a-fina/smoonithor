@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="./smoothie.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+      // TimeSeries Chart
+      var random = new TimeSeries();
+
+      // Asyncronous communication with server
+      var socket = io.connect('http://localhost');
+      socket.on('new-point', function (data) {
+        random.append(data.x, data.y);
+      });
+
+      socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+      });
+
+      function createTimeline() {
+        var chart = new SmoothieChart();
+        chart.addTimeSeries(random, { 
+          strokeStyle: 'rgba(0, 255, 0, 1)', 
+          fillStyle: 'rgba(0, 255, 0, 0.2)', 
+          lineWidth: 4 
+        });
+        chart.streamTo(document.getElementById("chart"), 500);
+      }
+    </script>
+  </head>
+  <body onload="createTimeline()" style="background-color:#333333">
+
+    <canvas id="chart" width="700" height="300"></canvas>
+
+  </body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "description": "monitor smartrelay log",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bayois/smoonithor.git"
+  },
+  "dependencies": {
+    "union": "0.3.0",
+    "tail": "*",
+    "ecstatic": "*",
+    "socket.io": "*",
+    "flatiron": "0.2.5"
+  },
+  "devDependencies": {
+    "api-easy": "0.3.2",
+    "vows": "0.6.1"
+  },
+  "scripts": {
+    "test": "vows --spec",
+    "start": "node app.js"
+  },
+  "name": "smart-monitor",
+  "author": "bayois <bayois@gmail.com>",
+  "homepage": ""
+}
