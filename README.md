@@ -3,7 +3,15 @@ smoonithor
 
 Simple smoothie charts + socket.io monitoring server
 
-TODO
-----
+Install
+-------
 
-commit
+git clone https://github.com/bayois/smoonithor.git
+
+npm install
+
+edit app.js
+
+edit public/monitor.html
+
+node app.js
