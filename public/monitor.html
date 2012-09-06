@@ -19,6 +19,8 @@
       });
 
       function createTimeline() {
+        resizeTimeline();
+
         var chart = new SmoothieChart();
         chart.addTimeSeries(random, { 
           strokeStyle: 'rgba(0, 255, 0, 1)', 
@@ -27,11 +29,16 @@
         });
         chart.streamTo(document.getElementById("chart"), 500);
       }
+      function resizeTimeline(){
+        var ctx = document.getElementById("chart").getContext("2d");
+        ctx.canvas.width  = window.innerWidth-20;
+        ctx.canvas.height = window.innerHeight-20;
+      }
     </script>
   </head>
-  <body onload="createTimeline()" style="background-color:#333333">
+  <body onload="createTimeline()" onresize="resizeTimeline()" style="background-color:#333333">
 
-    <canvas id="chart" width="700" height="300"></canvas>
+    <canvas id="chart" width="1000" height="300"></canvas>
 
   </body>
 </html>
