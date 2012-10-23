@@ -5,12 +5,15 @@
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
       // TimeSeries Chart
-      var random = new TimeSeries();
+      var greenSerie = new TimeSeries();
+      var redSerie = new TimeSeries();
 
       // Asyncronous communication with server
-      var socket = io.connect('http://localhost');
+      alert(window.location.host);
+      var socket = io.connect('http://localhost:3000');
       socket.on('new-point', function (data) {
-        random.append(data.x, data.y);
+        greenSerie.append(data.x, data.gy);
+        redSerie.append(data.x, data.ry);
       });
 
       socket.on('news', function (data) {
@@ -22,9 +25,14 @@
         resizeTimeline();
 
         var chart = new SmoothieChart();
-        chart.addTimeSeries(random, { 
+        chart.addTimeSeries(greenSerie, { 
           strokeStyle: 'rgba(0, 255, 0, 1)', 
           fillStyle: 'rgba(0, 255, 0, 0.2)', 
+          lineWidth: 4 
+        });
+        chart.addTimeSeries(redSerie, { 
+          strokeStyle: 'rgba(255, 0, 0, 1)', 
+          fillStyle: 'rgba(255, 0, 0, 0.2)', 
           lineWidth: 4 
         });
         chart.streamTo(document.getElementById("chart"), 500);

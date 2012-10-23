@@ -6,7 +6,22 @@ var flatiron = require('flatiron'),
 
 var spawn = require('child_process').spawn;
 
-var filename = "filename.log";
+function getFileName(){
+  var d = new Date();
+  var dt = d.getDate();
+  var mt = d.getMonth() +1;
+  var yr = d.getFullYear();
+
+  if (dt < 10)
+    dt = "0" + dt;
+  if (mt < 10)
+    mt = "0" + mt;
+
+  //return "/home/alessio/workspace/node.js/smoonithor/filename"+yr+mt+dt+".log";
+  return "/home/alessio/workspace/node.js/smoonithor/filename.log";
+}
+
+var filename = getFileName();
 fs.statSync(filename);
 console.log('Monitoring:' + filename);
 
@@ -37,7 +52,8 @@ app.start(3000);
  */
 var sio = require('socket.io').listen(app.server);
 
-var rePattern = new RegExp(/.* put here a string to match and an incremental number: (\d+).*/);
+var gPattern = new RegExp(/.*OK.*/);
+var rPattern = new RegExp(/.*ERROR.*/);
 
 sio.sockets.on('connection', function (socket) {
   /*sent by client 
@@ -49,30 +65,44 @@ sio.sockets.on('connection', function (socket) {
   /*
    * Update client chart every 1000 sec.
    */
-  var old_value, last_value, diff_value = 0;
+  var g_old_value, g_diff_value = 0;
+  var r_old_value, r_last_value, r_diff_value = 0;
+  var g_last_value = 0;
+  var r_last_value = 0;
   var number = null;
   // Update client chart every 1000 sec.
   setInterval(function() {
-      diff_value = last_value - old_value;
-      old_value = last_value;
+      g_diff_value = g_last_value - g_old_value;
+      g_old_value = g_last_value;
+      r_diff_value = r_last_value - r_old_value;
+      r_old_value = r_last_value;
 
- // DEBUG     socket.emit('news',{ debug: 'string emit news' });
+ // DEBUG     
+      socket.emit('news',{ debug: 'string emit news' });
       socket.emit('new-point',{
         x: new Date().getTime(), 
-        y: diff_value
+        gy: g_diff_value,
+        ry: r_diff_value 
       });
 
-      diff_value = 0;
+      g_diff_value = 0;
+      r_diff_value = 0;
   }, 1000);
 
   /*
    * Wait for new line and get last_value 
    */
+  filename = getFileName();
   var tail = spawn("tail", ["-f", filename]);
   tail.stdout.on("data", function (data) {
   //tail.on("line", function(data) { NOT work on all system
-      if  ( (number = data.toString().match(rePattern)) != null){	
-      	last_value  = number[1];
+      if  ( (number = data.toString().match(rPattern)) != null){	
+      	r_last_value  += 1;
+        console.log("rPattern match:" + r_last_value);
+      }
+      if  ( (number = data.toString().match(gPattern)) != null){	
+      	g_last_value  += 1;
+        console.log("gPattern match: " + g_last_value);
       }
   });
 });
